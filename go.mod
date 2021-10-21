@@ -1,13 +1,16 @@
-module GoMeter
+module github.com/ArrEssJay/PM5350_Modbus
 
 go 1.17
 
 require (
-	github.com/DataDog/datadog-go/v5 v5.0.1 // indirect
-	//	github.com/DataDog/datadog-go/v5 v5.0.0 // indirect
+	github.com/DataDog/datadog-go/v5 v5.0.1
+	github.com/jessevdk/go-flags v1.5.0
+	github.com/simonvetter/modbus v1.3.0
+)
+
+require (
 	github.com/Microsoft/go-winio v0.5.0 // indirect
 	github.com/goburrow/serial v0.1.0 // indirect
-	github.com/jessevdk/go-flags v1.5.0 // indirect
-	github.com/simonvetter/modbus v1.3.0 // indirect
-	golang.org/x/sys v0.0.0-20210320140829-1e4c9ba3b0c4 // indirect
+	github.com/rs/zerolog v1.25.0 // indirect
+	golang.org/x/sys v0.0.0-20210510120138-977fb7262007 // indirect
 )

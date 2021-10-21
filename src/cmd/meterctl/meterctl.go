@@ -1,10 +1,12 @@
 package main
 
 import (
-	"log"
 	"os"
 
-	"GoMeter/src/lib"
+        "github.com/rs/zerolog"
+        "github.com/rs/zerolog/log"
+
+        "github.com/ArrEssJay/PM5350_Modbus/src/lib"
 
 	"github.com/jessevdk/go-flags"
 	"github.com/simonvetter/modbus"
@@ -29,13 +31,14 @@ func main() {
 			os.Exit(1)
 		}
 	}
+	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
 
 	var clientErr error
 	var mbclient *modbus.ModbusClient
 
 	mbclient, clientErr = lib.GetClient()
 	if clientErr != nil {
-		log.Println(clientErr.Error())
+		log.Error().Err(clientErr)
 		os.Exit(1)
 	}
 
@@ -50,10 +53,10 @@ func main() {
 
 	cmdStatus, cmderr = lib.SendCommand(mbclient, false, cmdstr, []uint16{uint16(options.DOIndex)})
 	if cmderr != nil {
-		log.Println(cmderr)
+		log.Error().Err(cmderr)
 	} else {
-		log.Println("Command status:", cmdStatus)
-
+		log.Debug().
+        	Uint16("Command Status", cmdStatus)
 	}
 
 	// Print DI and DO state
@@ -62,19 +65,25 @@ func main() {
 	DOreg, regerr = mbclient.ReadRegister(lib.GetRegisterUint16("DO_STATUS_BITMAP"), modbus.HOLDING_REGISTER)
 
 	if regerr != nil {
-		log.Println(regerr)
+		log.Error().Err(regerr)
 	} else {
 		// 2 DIs on PM5350
-		log.Println("DO Status Bitmap:", DOreg&1 > 0, DOreg&2 > 0)
+		log.Info().
+		Bool("DO1", DOreg&1 > 0).
+                Bool("DO2", DOreg&2 > 0).Msg("DO Status Bitmap")
 	}
 	var DIreg uint16
 	DIreg, regerr = mbclient.ReadRegister(lib.GetRegisterUint16("DI_STATUS_BITMAP"), modbus.HOLDING_REGISTER)
 
 	if regerr != nil {
-		log.Println(regerr)
+		log.Error().Err(regerr)
 	} else {
 		// 4 DIs on PM5350
-		log.Println("DI Status Bitmap:", DIreg&1 > 0, DIreg&2 > 0, DIreg&3 > 0, DIreg&4 > 0)
+		log.Info().
+                Bool("DI1", DIreg&1 > 0).
+                Bool("DI2", DIreg&2 > 0).
+                Bool("DI3", DIreg&3 > 0).
+                Bool("DI4", DIreg&4 > 0).Msg("DI Status Bitmap")
 	}
 	mbclient.Close()
 }

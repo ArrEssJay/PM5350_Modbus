@@ -5,7 +5,7 @@ import (
 	"os"
 	"time"
 
-	"GoMeter/src/lib"
+	"github.com/ArrEssJay/PM5350_Modbus/src/lib"
 
 	"github.com/simonvetter/modbus"
 )

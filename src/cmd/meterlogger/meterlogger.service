@@ -1,0 +1,12 @@
+[Unit]
+Description=PM5350 Logger
+Wants=network.target
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/meterlogger
+Restart=yes
+
+[Install]
+WantedBy=multi-user.target

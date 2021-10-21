@@ -49,6 +49,7 @@ var ModbusCommands = map[string]uint16{
 
 const (
 	URL string = "tcp://10.3.0.3:502"
+
 )
 
 func GetRegisterUint16(register string) uint16 {
@@ -131,7 +132,7 @@ func GetClient() (*modbus.ModbusClient, error) {
 
 	err = client.Open()
 
-	log.Println("Opened Connection to", URL)
+	log.Println("Opened Modbus connection to", URL)
 
 	return client, err
 }

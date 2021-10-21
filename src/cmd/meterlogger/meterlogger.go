@@ -10,7 +10,7 @@ import (
 
 	"github.com/simonvetter/modbus"
 
-	"GoMeter/src/lib"
+	"github.com/ArrEssJay/PM5350_Modbus/src/lib"
 
 	"github.com/DataDog/datadog-go/v5/statsd"
 )
@@ -40,15 +40,17 @@ func main() {
 
 	mbclient, clientErr = lib.GetClient()
 	if clientErr != nil {
-		fmt.Println(clientErr.Error())
-		return
+		log.Fatal(clientErr.Error())
+		os.Exit(1)
 	}
 
-	statsd, statsderr := statsd.New("127.0.0.1:8125")
+	statsd, statsderr := statsd.New("unix:///var/run/datadog/dsd.socket", statsd.WithoutClientSideAggregation())
 	if statsderr != nil {
 		log.Fatal(statsderr)
 		os.Exit(1)
 	}
+
+	log.Println("Logging Meter Data to Datadog....")
 
 	for {
 		for key, value := range lib.ModbusRegistersFloat32 {
@@ -57,7 +59,7 @@ func main() {
 			var readErr error
 			regVal, readErr = mbclient.ReadFloat32(value, modbus.HOLDING_REGISTER)
 			if readErr == nil {
-				log.Println(key, "=>", ":", float64(regVal))
+				// log.Println(key, "=>", ":", float64(regVal))
 				statsd.Distribution(key, float64(regVal), []string{"environment:dev"}, 1)
 			} else {
 				log.Println("Register:", key, "=>", "ERROR", readErr)
